@@ -2,9 +2,9 @@ import express from "express";
 import path from "path";
 import { clerkMiddleware } from "@clerk/express";
 import { ENV } from "../src/config/env.js";
-import { connectDB } from "./config/db.js";
+import { connectDB } from "../src/config/db.js";
 import { serve } from "inngest/express";
-import { functions, inngest } from "./config/inngest.js";
+import { functions, inngest } from "../src/config/inngest.js";
 
 const app = express();
 const __dirname = path.resolve();

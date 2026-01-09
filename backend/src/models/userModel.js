@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    imageURL:{
+    imageUrl:{
         type:String,
         default:""
     },
