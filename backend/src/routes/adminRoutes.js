@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProduct, getAllProducts, updateProduct } from "../controllers/adminController.js";
+import { createProduct, getAllOrders, getAllProducts, updateProduct, updateOrderStatus, getAllCustomers, getDashboardStats} from "../controllers/adminController.js";
 import { adminOnly, protectRoute } from "../middleware/authMiddleware.js";
 import { upload } from "../middleware/multerMiddleware.js";
 
@@ -11,4 +11,10 @@ router.post("/products", upload.array("images",3), createProduct);
 router.get("/products", getAllProducts);
 router.put("/products/:id", upload.array("images",3), updateProduct);
 
+router.get("/orders", getAllOrders);
+router.patch("/orders/:orderId/status", updateOrderStatus);
+
+router.get("/custormers", getAllCustomers);
+
+router.get("/stats", getDashboardStats);
 export default router;

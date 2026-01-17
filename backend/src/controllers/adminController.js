@@ -1,5 +1,7 @@
 import cloudinary from "../config/cloudinary.js";
 import { Product } from "../models/productModel.js";
+import { Order } from "../models/orderModel.js";
+import { User } from "../models/userModel.js";
 
 export async function createProduct(req,res) {
     try {
@@ -81,10 +83,100 @@ export async function updateProduct(req,res) {
             });
 
             const uploadResults = await Promise.all(uploadPromises);
-            product.images = uploadResults.map
+            product.images = uploadResults.map((result) => result.secure_url);
         }
+
+        await product.save();
+        res.status(200).json(product);
     } catch (error) {
         console.error("Error updating products: ", error);
+        res.status(500).json({message:"Internal server error"});
+    }
+}
+
+export async function getAllOrders(_, res) {
+    try {
+        const orders = await Order.find()
+        .populate("user","name email")
+        .populate("orderItems.product")
+        .sort({createdAt:-1})
+
+        res.status(200).json({ orders });
+    } catch (error) {
+        console.error("Error in getAllOrders Controllers:", error);
+        res.status(500).json({error:"Internal server error"});
+    }
+}
+
+export async function updateOrderStatus(req, res) {
+    try {
+        const  { orderId } = req.params;
+        const { status } = req.body;
+        
+        if(!["pending","shipped","delivered"].includes[status]){
+            return res.status(400).json({ error : "Invalid status"});
+        }
+
+        const order = await Order.findById(orderId);
+        if(!order){
+            return res.status(404).json({ error :"Order not found"});
+        }
+
+        order.status == status;
+
+        if(status ==="shipped" && !order.shippedAt){
+            order.shippedAt == new Date();
+        }
+
+        if(status === "delivered" && !order.deliveredAt) {
+            order.deliveredAt = new Date();
+        }
+
+        await order.save();
+
+        res.status(200).json({ message:"Order status upload successfylly", order});
+    } catch (error) {
+        console.error("Error in updateOrderStatus controller:", error);
+        res.status(500).json({error:"Tnternal server error"});
+        
+    }
+}
+
+export async function getAllCustomers(_, res) {
+    try {
+        const customers = await User.find().sort({ createdAt: -1});  //latest user first
+        res.status(200).json({ customers})
+    } catch (error) {
+        console.error("Error in fetching customers:", error);
+        res.status(500).json({ error:"Internal server error"});
+    }
+}
+
+export async function getDashboardStats(_, res) {
+    try {
+        const totalOrders = await Order.countDocuments();
+
+        const reveneResult = await Order.aggregate([
+            {
+                $group:{
+                    _id: null,
+                    total:{ $sum: "$totalPrice"},
+                },
+            },
+        ]);
+
+        const totalRevenue = reveneResult[0]?.total || 0;
+        const totalCustomers = await User.countDocuments();
+        const totalProducts = await Product.countDocuments();
+
+        res.status(200).json({
+            totalRevenue,
+            totalOrders,
+            totalCustomers,
+            totalProducts,
+        })
+    } catch (error) {
+        console.error("Error in fetching dashboard stats:", error);
         res.status(500).json({message:"Internal server error"});
     }
 }
