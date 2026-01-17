@@ -67,7 +67,7 @@ export async function updateProduct(req,res) {
 
         if(name) product.name = name;
         if(description) product.description = description;
-        if(price) product.price = price;
+        if(price !== undefined) product.price = parseFloat(price);
         if(stock !== undefined) product.stock = parseInt(stock);
         if(category) product.category = category;
 
@@ -179,4 +179,4 @@ export async function getDashboardStats(_, res) {
         console.error("Error in fetching dashboard stats:", error);
         res.status(500).json({message:"Internal server error"});
     }
-}
+} 
