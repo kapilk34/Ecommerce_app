@@ -5,8 +5,9 @@ import { ENV } from "../src/config/env.js";
 import { connectDB } from "../src/config/db.js";
 import { serve } from "inngest/express";
 import { functions, inngest } from "../src/config/inngest.js";
-import adminRoutes from "./routes/adminRoutes.js"
-import userRoutes from "./routes/userRoutes.js"
+import adminRoutes from "./routes/adminRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/inngest", serve({client:inngest, functions}))
 app.use("/api/admin",adminRoutes)
 app.use("/api/users",userRoutes)
+app.use("/api/orders",orderRoutes)
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "success" });
