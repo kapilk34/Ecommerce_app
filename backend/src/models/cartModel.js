@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Product } from "./productModel";
+import { Product } from "./productModel.js";
 
 const cartIdemSchema = new mongoose.Schema({
     Product:{
@@ -29,5 +29,5 @@ const cartSchema = new mongoose.Schema({
     items:{cartIdemSchema}
 },{timestamps:true});
 
-export const cart = mongoose.model("Cart", cartSchema);
+export const Cart = mongoose.model("Cart", cartSchema);
 
