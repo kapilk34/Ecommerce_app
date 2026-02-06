@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
     price:{
         type:Number,
         required:true,
-        min:50
+        min:1
     },
     stock:{
         type:Number,
@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema({
         required:true,
     },
     images:{
-        type:String,
+        type:[String],
         required:true
     },
     averageRating:{
